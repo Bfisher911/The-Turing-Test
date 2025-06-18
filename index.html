@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Turing Test: An Interactive Infographic</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #1e3a8a, #3b0764);
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        .chat-bubble {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        .chat-bubble.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .btn {
+            transition: all 0.3s ease;
+        }
+        .btn:hover {
+            transform: scale(1.05);
+        }
+        .choice-box {
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        .choice-box:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        .choice-box.selected {
+            border-color: #38bdf8; /* light blue */
+            background: rgba(56, 189, 248, 0.1);
+        }
+        .choice-box.correct {
+            border-color: #4ade80; /* green */
+            background: rgba(74, 222, 128, 0.1);
+        }
+        .choice-box.incorrect {
+            border-color: #f87171; /* red */
+            background: rgba(248, 113, 113, 0.1);
+        }
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-in-out;
+        }
+    </style>
+</head>
+<body class="gradient-bg text-white antialiased">
+
+    <div class="container mx-auto px-4 py-12">
+
+        <!-- Header -->
+        <header class="text-center mb-16">
+            <h1 class="text-4xl md:text-6xl font-bold mb-4">The Turing Test</h1>
+            <p class="text-lg md:text-xl text-blue-200 max-w-3xl mx-auto">An interactive exploration of Alan Turing's "Imitation Game" and the quest to determine if machines can think.</p>
+        </header>
+
+        <!-- Visual Representation Section -->
+        <section class="mb-20">
+            <h2 class="text-3xl font-bold text-center mb-8">A Visual Scenario</h2>
+            <div class="max-w-4xl mx-auto card rounded-2xl p-6 md:p-8">
+                <svg viewBox="0 0 400 200" class="w-full h-auto" style="font-family: 'Inter', sans-serif;">
+                    <!-- Define arrow marker for communication lines -->
+                    <defs>
+                        <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                            <path d="M 0 0 L 10 5 L 0 10 z" fill="rgba(56, 189, 248, 0.7)" />
+                        </marker>
+                    </defs>
+
+                    <!-- SVG Styles -->
+                    <style>
+                        .room {
+                            fill: rgba(255, 255, 255, 0.05);
+                            stroke: rgba(255, 255, 255, 0.2);
+                            stroke-width: 1;
+                            rx: 8;
+                        }
+                        .desk {
+                            fill: rgba(255, 255, 255, 0.1);
+                            rx: 4;
+                        }
+                        .computer {
+                            fill: #38bdf8; /* light blue */
+                        }
+                        .person-head {
+                            fill: #94a3b8; /* slate-400 */
+                        }
+                        .person-body {
+                            fill: #64748b; /* slate-500 */
+                        }
+                        .label {
+                            font-size: 8px;
+                            font-weight: 600;
+                            fill: #cbd5e1; /* slate-300 */
+                            text-anchor: middle;
+                        }
+                        .comms-line {
+                            stroke: rgba(56, 189, 248, 0.7);
+                            stroke-width: 1.5;
+                            stroke-dasharray: 4 2;
+                            fill: none;
+                            marker-end: url(#arrow);
+                        }
+                        .question-line {
+                             stroke: rgba(255, 255, 255, 0.5);
+                             stroke-width: 1.5;
+                             stroke-dasharray: 4 2;
+                             fill: none;
+                        }
+                        .q-text {
+                            font-size: 14px;
+                            fill: white;
+                            font-weight: bold;
+                            text-anchor: middle;
+                        }
+                    </style>
+
+                    <!-- Top Rooms (Participants A & B) -->
+                    <rect class="room" x="10" y="10" width="180" height="80" />
+                    <rect class="room" x="210" y="10" width="180" height="80" />
+
+                    <!-- Room A: Human -->
+                    <text class="label" x="100" y="22">PARTICIPANT A (Human)</text>
+                    <rect class="desk" x="85" y="40" width="30" height="15" />
+                    <rect class="computer" x="90" y="42" width="20" height="10" />
+                    <circle class="person-head" cx="100" cy="65" r="5" />
+                    <rect class="person-body" x="95" y="70" width="10" height="12" rx="3"/>
+
+                    <!-- Room B: AI -->
+                    <text class="label" x="300" y="22">PARTICIPANT B (AI)</text>
+                    <rect class="desk" x="285" y="40" width="30" height="15" />
+                    <rect class="computer" x="290" y="42" width="20" height="10" />
+                    <!-- No person icon for the AI room -->
+
+                    <!-- Bottom Room (Interrogator C) -->
+                    <rect class="room" x="110" y="110" width="180" height="80" />
+
+                    <!-- Room C: Interrogator -->
+                    <text class="label" x="200" y="122">INTERROGATOR (You)</text>
+                    <rect class="desk" x="185" y="150" width="30" height="15" />
+                    <rect class="computer" x="190" y="152" width="20" height="10" />
+                    <circle class="person-head" cx="200" cy="135" r="5" />
+                    <rect class="person-body" x="195" y="140" width="10" height="12" rx="3"/>
+
+                    <!-- Communication Lines -->
+                    <!-- From A and B to C, representing answers -->
+                    <path class="comms-line" d="M 100 90 Q 100 100 190 152" />
+                    <path class="comms-line" d="M 300 90 Q 300 100 210 152" />
+                    
+                    <!-- From C to A and B, representing questions -->
+                    <path class="question-line" d="M 200 150 Q 150 110 100 90" />
+                    <path class="question-line" d="M 200 150 Q 250 110 300 90" />
+                    <text class="q-text" x="150" y="105">?</text>
+                    <text class="q-text" x="250" y="105">?</text>
+                </svg>
+            </div>
+        </section>
+
+        <!-- What is it? Section -->
+        <section class="mb-20">
+            <div class="max-w-4xl mx-auto grid md:grid-cols-3 gap-8 items-center">
+                <div class="md:col-span-1 text-center md:text-left">
+                    <h2 class="text-3xl font-bold mb-2">The Roles</h2>
+                    <p class="text-blue-300">The test involves three players, separated and communicating only through text.</p>
+                </div>
+                <div class="md:col-span-2 grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div class="card p-6 rounded-2xl text-center">
+                        <div class="text-4xl mb-3">🧐</div>
+                        <h3 class="font-bold text-lg">The Interrogator (C)</h3>
+                        <p class="text-sm text-blue-300">A human who asks questions to determine which of the other two players is the machine.</p>
+                    </div>
+                    <div class="card p-6 rounded-2xl text-center">
+                        <div class="text-4xl mb-3">👤</div>
+                        <h3 class="font-bold text-lg">The Human (A)</h3>
+                        <p class="text-sm text-blue-300">Tries to convince the interrogator that they are, in fact, human.</p>
+                    </div>
+                    <div class="card p-6 rounded-2xl text-center">
+                         <div class="text-4xl mb-3">🤖</div>
+                        <h3 class="font-bold text-lg">The Machine (B)</h3>
+                        <p class="text-sm text-blue-300">Tries to imitate a human and deceive the interrogator.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Interactive Simulation Section -->
+        <section id="simulation" class="mb-20">
+            <h2 class="text-3xl font-bold text-center mb-2">Take the Test</h2>
+            <p class="text-blue-200 text-center mb-8 max-w-2xl mx-auto">You are the interrogator. Ask a question and decide which response comes from the machine.</p>
+
+            <div class="max-w-5xl mx-auto card rounded-2xl p-6 md:p-8">
+                <!-- Control Panel -->
+                <div id="controlPanel" class="text-center mb-6">
+                     <button id="askQuestionBtn" class="btn bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-full">
+                        Ask a Question
+                    </button>
+                </div>
+                
+                <!-- Chat Area -->
+                <div id="chatArea" class="space-y-6">
+                    <!-- Question will be injected here -->
+                </div>
+
+                <!-- Choice Area -->
+                <div id="choiceArea" class="mt-8 pt-6 border-t border-gray-600 hidden">
+                    <h3 class="text-center font-semibold mb-4">Who is the machine? Click on your choice.</h3>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div id="choiceA" data-entity="A" class="choice-box p-4 rounded-lg text-center">
+                            <h4 class="font-bold">Participant A</h4>
+                        </div>
+                        <div id="choiceB" data-entity="B" class="choice-box p-4 rounded-lg text-center">
+                            <h4 class="font-bold">Participant B</h4>
+                        </div>
+                    </div>
+                    <div id="feedback" class="text-center mt-4 font-semibold"></div>
+                     <div id="nextBtnContainer" class="text-center mt-4 hidden">
+                        <button id="nextQuestionBtn" class="btn bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-5 rounded-full">
+                            Next Question
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Significance & Criticisms Section -->
+        <section class="max-w-5xl mx-auto">
+            <h2 class="text-3xl font-bold text-center mb-8">Why Does It Matter?</h2>
+             <div class="grid md:grid-cols-2 gap-8">
+                <!-- Accordion Item 1: Significance -->
+                <div class="card rounded-2xl p-6">
+                    <button class="accordion-toggle flex justify-between items-center w-full text-left">
+                        <h3 class="text-xl font-semibold text-blue-300">The Impact of the Test</h3>
+                        <span class="text-2xl transform transition-transform duration-300">+</span>
+                    </button>
+                    <div class="accordion-content">
+                        <ul class="mt-4 space-y-3 text-blue-400">
+                            <li><strong>Philosophical Debate:</strong> It sparked fundamental questions about consciousness, intelligence, and what it means to be human.</li>
+                            <li><strong>AI Benchmark:</strong> For decades, it served as a conceptual benchmark for creating more human-like AI systems.</li>
+                            <li><strong>Public Imagination:</strong> It captured the public's imagination, heavily influencing how AI is portrayed in science fiction and media.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Accordion Item 2: Criticisms -->
+                <div class="card rounded-2xl p-6">
+                    <button class="accordion-toggle flex justify-between items-center w-full text-left">
+                        <h3 class="text-xl font-semibold text-red-300">Is it a Flawless Measure?</h3>
+                        <span class="text-2xl transform transition-transform duration-300">+</span>
+                    </button>
+                    <div class="accordion-content">
+                         <ul class="mt-4 space-y-3 text-red-400">
+                            <li><strong>Deception, not Intelligence:</strong> Critics argue the test measures the ability to deceive, not true understanding or consciousness. A machine could pass using clever tricks.</li>
+                            <li><strong>The Chinese Room Argument:</strong> Philosopher John Searle argued that even if a machine passes, it doesn't "understand" the conversation, it just manipulates symbols—like someone following instructions in a language they don't know.</li>
+                            <li><strong>Anthropocentric:</strong> The test is centered on human-like conversation. Is that the only form of intelligence?</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="text-center mt-20 pt-8 border-t border-gray-700">
+            <p class="text-blue-300">While modern AI research has moved towards more specific and measurable benchmarks, the Turing Test remains a powerful thought experiment about the boundaries between human and artificial minds.</p>
+        </footer>
+
+    </div>
+
+    <script>
+        const scenarios = [
+            {
+                question: "Can you write me a short poem about a rainy day?",
+                machineResponse: "The sky weeps tears of grey, upon the windowpane they play. A lonely rhythm, soft and low, a world in monochrome tableau.",
+                humanResponse: "Sure, here you go: Silver drops on green leaves, washing the world clean. The smell of wet earth rises, a quiet, cozy scene.",
+                machineIs: 'A'
+            },
+            {
+                question: "What's heavier, a pound of feathers or a kilogram of steel?",
+                machineResponse: "A kilogram of steel is heavier. A kilogram is approximately 2.20462 pounds, which is more than one pound.",
+                humanResponse: "Haha, the classic trick question! A kilogram of steel is heavier, of course. You almost had me thinking about the 'pound of feathers vs pound of lead' one.",
+                machineIs: 'B'
+            },
+            {
+                question: "I'm feeling a bit down today. What should I do?",
+                machineResponse: "I am sorry to hear that. Engaging in activities you enjoy can often help elevate mood. Consider listening to music, going for a walk, or talking to a friend.",
+                humanResponse: "Oh no, that's the worst. Honestly, sometimes just wrapping up in a blanket with a good movie and some comfort food does the trick for me. Hope you feel better soon!",
+                machineIs: 'A'
+            }
+        ];
+
+        let currentScenarioIndex = 0;
+        let canChoose = false;
+
+        const askQuestionBtn = document.getElementById('askQuestionBtn');
+        const nextQuestionBtn = document.getElementById('nextQuestionBtn');
+        const nextBtnContainer = document.getElementById('nextBtnContainer');
+        const chatArea = document.getElementById('chatArea');
+        const choiceArea = document.getElementById('choiceArea');
+        const choiceA = document.getElementById('choiceA');
+        const choiceB = document.getElementById('choiceB');
+        const feedback = document.getElementById('feedback');
+        
+        // Accordion logic
+        document.querySelectorAll('.accordion-toggle').forEach(button => {
+            button.addEventListener('click', () => {
+                const content = button.nextElementSibling;
+                const icon = button.querySelector('span');
+                
+                if (content.style.maxHeight) {
+                    content.style.maxHeight = null;
+                    icon.style.transform = 'rotate(0deg)';
+                } else {
+                    document.querySelectorAll('.accordion-content').forEach(c => c.style.maxHeight = null);
+                    document.querySelectorAll('.accordion-toggle span').forEach(i => i.style.transform = 'rotate(0deg)');
+                    content.style.maxHeight = content.scrollHeight + "px";
+                    icon.style.transform = 'rotate(45deg)';
+                } 
+            });
+        });
+
+        askQuestionBtn.addEventListener('click', () => {
+            askQuestionBtn.style.display = 'none';
+            startScenario(currentScenarioIndex);
+        });
+
+        nextQuestionBtn.addEventListener('click', () => {
+            currentScenarioIndex = (currentScenarioIndex + 1) % scenarios.length;
+            resetSimulation();
+            startScenario(currentScenarioIndex);
+        });
+        
+        function resetSimulation() {
+            chatArea.innerHTML = '';
+            choiceArea.style.display = 'none';
+            nextBtnContainer.style.display = 'none';
+            feedback.textContent = '';
+            choiceA.classList.remove('correct', 'incorrect', 'selected');
+            choiceB.classList.remove('correct', 'incorrect', 'selected');
+        }
+
+        function startScenario(index) {
+            const scenario = scenarios[index];
+            canChoose = false;
+
+            // Display question
+            let delay = 500;
+            addChatBubble('🧐 Interrogator (You)', scenario.question, delay);
+
+            // Display responses randomly ordered
+            delay += 1500;
+            const isMachineFirst = Math.random() > 0.5;
+            const firstParticipantLabel = isMachineFirst ? 'Participant B' : 'Participant A';
+            const secondParticipantLabel = isMachineFirst ? 'Participant A' : 'Participant B';
+            
+            const firstResponse = isMachineFirst ? scenario.machineResponse : scenario.humanResponse;
+            const secondResponse = isMachineFirst ? scenario.humanResponse : scenario.machineResponse;
+
+            addChatBubble(`👤 ${firstParticipantLabel}`, firstResponse, delay);
+            delay += 2000;
+            addChatBubble(`🤖 ${secondParticipantLabel}`, secondResponse, delay);
+
+            setTimeout(() => {
+                choiceArea.style.display = 'block';
+                canChoose = true;
+            }, delay);
+        }
+
+        function addChatBubble(sender, text, delay) {
+            const bubble = document.createElement('div');
+            bubble.className = 'chat-bubble card rounded-xl p-4';
+            bubble.innerHTML = `
+                <div class="font-bold mb-1">${sender}</div>
+                <p class="text-blue-200">${text}</p>
+            `;
+            setTimeout(() => {
+                chatArea.appendChild(bubble);
+                setTimeout(() => bubble.classList.add('visible'), 50);
+            }, delay);
+        }
+
+        [choiceA, choiceB].forEach(choice => {
+            choice.addEventListener('click', () => {
+                if (!canChoose) return;
+                canChoose = false;
+                
+                choiceA.classList.remove('selected');
+                choiceB.classList.remove('selected');
+                choice.classList.add('selected');
+
+                const chosenEntity = choice.getAttribute('data-entity');
+                const correctEntity = scenarios[currentScenarioIndex].machineIs;
+                
+                setTimeout(() => {
+                    if (chosenEntity === correctEntity) {
+                        choice.classList.add('correct');
+                        feedback.textContent = "Correct! That was the machine.";
+                        feedback.style.color = '#4ade80';
+                    } else {
+                        choice.classList.add('incorrect');
+                        const correctChoice = document.querySelector(`[data-entity="${correctEntity}"]`);
+                        correctChoice.classList.add('correct');
+                        feedback.textContent = `Incorrect. Participant ${correctEntity} was the machine.`;
+                        feedback.style.color = '#f87171';
+                    }
+                    nextBtnContainer.style.display = 'block';
+                }, 500);
+            });
+        });
+
+    </script>
+</body>
+</html>
